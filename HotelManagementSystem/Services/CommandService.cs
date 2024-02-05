@@ -24,5 +24,51 @@ namespace HotelManagementSystem.Services
                 return new List<CommandModel>();
             }
         }
+        public void Book(int roomNumber, string guestName, int guestAge, ref Hotel hotel, ref List<Guest> guests, ref string response)
+        {
+            if (hotel == null)
+            {
+                response += "Error hotel not created.\r\n";
+                return;
+            }
+
+            var room = GetRoomByNumber(roomNumber, hotel);
+            if (room == null)
+            {
+                response += $"Error Room {roomNumber} does not exist.\r\n";
+                return;
+            }
+
+            if (room.Occupant != null)
+            {
+                response += $"Cannot book room {roomNumber} for {guestName}, The room is currently booked by {room.Occupant.Name}.\r\n";
+            }
+
+            var keycardNumber = guests.Count + 1;
+            var guest = new Guest { KeycardNumber = keycardNumber, Name = guestName, Age = guestAge };
+            guests.Add(guest);
+            room.Occupant = guest;
+
+            response += $"Room {roomNumber} is booked by {guestName} with keycard number {keycardNumber}.\r\n";
+        }
+        public Room GetRoomByNumber(int roomNumber, Hotel hotel)
+        {
+            return hotel.Floors.SelectMany(floor => floor).FirstOrDefault(room => room.Number == roomNumber) ?? new();
+        }
+        public void ListAvailableRooms(Hotel hotel, ref string response)
+        {
+            if (hotel == null)
+            {
+                response += "Error: Hotel not created.\r\n";
+                return;
+            }
+
+            var availableRooms = hotel.Floors
+                .SelectMany(floor => floor.Where(room => room.Occupant == null))
+                .Select(room => room.Number);
+
+            response += $"Available rooms: {string.Join(", ", availableRooms)}\r\n";
+        }
+
     }
 }
