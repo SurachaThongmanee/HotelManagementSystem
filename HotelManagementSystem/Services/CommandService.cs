@@ -42,20 +42,20 @@ namespace HotelManagementSystem.Services
             if (room.Occupant != null)
             {
                 response += $"Cannot book room {roomNumber} for {guestName}, The room is currently booked by {room.Occupant.Name}.\r\n";
+                return;
             }
-
-            var keycardNumber = guests.Count + 1;
+            var keyCardNumberList = guests.Select(keyCardNumber => keyCardNumber.KeycardNumber).ToArray();
+            var keycardNumber = FindKeyCardNumberAvailable(keyCardNumberList);
             var guest = new Guest { KeycardNumber = keycardNumber, Name = guestName, Age = guestAge };
             guests.Add(guest);
             room.Occupant = guest;
-
             response += $"Room {roomNumber} is booked by {guestName} with keycard number {keycardNumber}.\r\n";
         }
         public Room GetRoomByNumber(int roomNumber, Hotel hotel)
         {
             return hotel.Floors.SelectMany(floor => floor).FirstOrDefault(room => room.Number == roomNumber) ?? new();
         }
-        public void ListAvailableRooms(Hotel hotel, ref string response)
+        public void ListAvailableRooms(ref Hotel hotel, ref string response)
         {
             if (hotel == null)
             {
@@ -67,7 +67,51 @@ namespace HotelManagementSystem.Services
                 .SelectMany(floor => floor.Where(room => room.Occupant == null))
                 .Select(room => room.Number);
 
-            response += $"Available rooms: {string.Join(", ", availableRooms)}\r\n";
+            response += $"{string.Join(", ", availableRooms)}\r\n";
+        }
+        public void CheckoutRoom(int keyCardNumber, string name, ref Hotel hotel, ref List<Guest> guests)
+        {
+            var roomToCheckout = hotel.Floors
+                                .SelectMany(floor => floor)
+                                .FirstOrDefault(room => room?.Occupant?.KeycardNumber == keyCardNumber && room?.Occupant?.Name == name);
+
+            if (roomToCheckout != null && roomToCheckout.Occupant != null)
+            {
+                roomToCheckout.Occupant = null;
+            }
+
+            var guestToCheckout = guests.FirstOrDefault(guest => guest.KeycardNumber == keyCardNumber && guest.Name == name);
+            if (guestToCheckout != null)
+            {
+                guests.Remove(guestToCheckout);
+            }
+            return;
+        }
+        public int FindKeyCardNumberAvailable(int[] array)
+        {
+            if (array == null || array.Length == 0)
+            {
+                return 1;
+            }
+
+            int[] positiveArray = array.Where(num => num > 0).ToArray();
+
+            if (positiveArray.Length == 0)
+            {
+                return 1;
+            }
+
+            Array.Sort(positiveArray);
+
+            for (int i = 1; i <= positiveArray.Length + 1; i++)
+            {
+                if (!positiveArray.Contains(i))
+                {
+                    return i;
+                }
+            }
+
+            return positiveArray.Length + 1;
         }
 
     }

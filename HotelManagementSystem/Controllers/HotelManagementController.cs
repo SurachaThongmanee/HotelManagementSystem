@@ -16,13 +16,13 @@ namespace HotelManagementSystem.Controllers
             _commandService = commandService;
         }
 
-        [HttpGet]
-        public string Input()
+        [HttpGet("Commands")]
+        public string Commands()
         {
             const string filename = "D:\\ProgramingTest\\APEAK\\HotelManagementSystem_\\input.txt";
             List<CommandModel> commands = _commandService.GetCommandsFromFileName(filename);
             Hotel hotel = new Hotel(null, null);
-            List<Guest> guest = new List<Guest>();
+            List<Guest> guests = new List<Guest>();
             string response = string.Empty;
             foreach (var command in commands)
             {
@@ -38,10 +38,15 @@ namespace HotelManagementSystem.Controllers
                         var roomNumber = (int)command.Params[0];
                         var guestName = (string)command.Params[1];
                         var guestAge = (int)command.Params[2];
-                        _commandService.Book(roomNumber, guestName, guestAge, ref hotel, ref guest, ref response);
+                        _commandService.Book(roomNumber, guestName, guestAge, ref hotel, ref guests, ref response);
                         break;
                     case "list_available_rooms":
-                        _commandService.ListAvailableRooms(ref hotel ,ref response);
+                        _commandService.ListAvailableRooms(ref hotel, ref response);
+                        break;
+                    case "checkout":
+                        var keyCardNumber = (int)command.Params[0];
+                        var name = (string)command.Params[1];
+                        _commandService.CheckoutRoom(keyCardNumber, name ,ref hotel, ref guests);
                         break;
                     default:
                         break;
