@@ -25,6 +25,20 @@ namespace HotelManagementSystem.Services
                 return new List<CommandModel>();
             }
         }
+        public bool CreateHotel(int floor, int roomPerFloor, ref Hotel hotel, ref string response)
+        {
+            try
+            {
+                hotel = new Hotel(floor, roomPerFloor);
+                response += $"Hotel created with {floor} floor(s), {roomPerFloor} room(s) per floor.\r\n";
+                return true;
+            }
+            catch (Exception e)
+            {
+                response += $"An error occurred while creating the hotel: {e.Message}\r\n";
+                return false;
+            }
+        }
         public void BookRoom(int roomNumber, string guestName, int guestAge, ref Hotel hotel, ref List<Guest> guests, ref string response)
         {
             try

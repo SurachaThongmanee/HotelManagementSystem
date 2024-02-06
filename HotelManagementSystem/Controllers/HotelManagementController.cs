@@ -1,4 +1,5 @@
 ﻿using HotelManagementSystem.Models;
+using HotelManagementSystem.Services;
 using HotelManagementSystem.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,8 +30,11 @@ namespace HotelManagementSystem.Controllers
                     case "create_hotel":
                         var floor = (int)command.Params[0];
                         var roomPerFloor = (int)command.Params[1];
-                        hotel = new Hotel(floor, roomPerFloor);
-                        response = $"Hotel created with {floor} floor(s), {roomPerFloor} room(s) per floor.\r\n";
+                        var resCreateHotel = _commandService.CreateHotel(floor, roomPerFloor,ref hotel,ref response);
+                        if (!resCreateHotel)
+                        {
+                            return response;
+                        }
                         break;
                     case "book":
                         var roomNumber = (int)command.Params[0];
