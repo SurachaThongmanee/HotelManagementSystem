@@ -1,9 +1,6 @@
 ﻿using HotelManagementSystem.Models;
-using HotelManagementSystem.Services;
 using HotelManagementSystem.Services.Interface;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.IO;
 
 namespace HotelManagementSystem.Controllers
 {
@@ -21,10 +18,10 @@ namespace HotelManagementSystem.Controllers
         public string Commands()
         {
             const string filename = "D:\\ProgramingTest\\APEAK\\HotelManagementSystem_\\input.txt";
-            List<CommandModel> commands = _commandService.GetCommandsFromFileName(filename);
+            string response = string.Empty;
+            List<CommandModel> commands = _commandService.GetCommandsFromFileName(filename, ref response);
             Hotel hotel = new Hotel(null, null);
             List<Guest> guests = new List<Guest>();
-            string response = string.Empty;
             foreach (var command in commands)
             {
                 switch (command.Name)
@@ -39,7 +36,7 @@ namespace HotelManagementSystem.Controllers
                         var roomNumber = (int)command.Params[0];
                         var guestName = (string)command.Params[1];
                         var guestAge = (int)command.Params[2];
-                        _commandService.Book(roomNumber, guestName, guestAge, ref hotel, ref guests, ref response);
+                        _commandService.BookRoom(roomNumber, guestName, guestAge, ref hotel, ref guests, ref response);
                         break;
                     case "list_available_rooms":
                         _commandService.ListAvailableRooms(ref hotel, ref response);
@@ -67,7 +64,7 @@ namespace HotelManagementSystem.Controllers
                         break;
                     case "checkout_guest_by_floor":
                         var checkoutFloorNumber = (int)command.Params[0];
-                        _commandService.CheckoutGuestsByFloor(checkoutFloorNumber, ref  guests, ref hotel, ref response);
+                        _commandService.CheckoutGuestsByFloor(checkoutFloorNumber, ref guests, ref hotel, ref response);
                         break;
                     case "book_by_floor":
                         var bookFloorNumber = (int)command.Params[0];

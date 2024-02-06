@@ -31,16 +31,16 @@
 
         public Hotel(int? floorCount, int? roomsPerFloor)
         {
-           Floors = new List<List<Room>>();
-           for (int i = 0; i < floorCount; i++)
-           {
-               var floor = new List<Room>();
-               for (int j = 0; j < roomsPerFloor; j++)
-               {
-                   floor.Add(new Room { Number = (i + 1) * 100 + (j + 1) });
-               }
-               Floors.Add(floor);
-           }
+            Floors = new List<List<Room>>();
+            for (int i = 0; i < floorCount; i++)
+            {
+                var floor = new List<Room>();
+                for (int j = 0; j < roomsPerFloor; j++)
+                {
+                    floor.Add(new Room { Number = (i + 1) * 100 + (j + 1) });
+                }
+                Floors.Add(floor);
+            }
         }
     }
 }
