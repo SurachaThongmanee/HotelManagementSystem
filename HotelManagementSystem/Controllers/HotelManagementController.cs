@@ -18,6 +18,7 @@ namespace HotelManagementSystem.Controllers
         public string Commands()
         {
         //test
+        //Test 2
             const string filename = "D:\\ProgramingTest\\APEAK\\HotelManagementSystem_\\input.txt";
             string response = string.Empty;
             List<CommandModel> commands = _commandService.GetCommandsFromFileName(filename, ref response);
